@@ -28,6 +28,11 @@ def remove_html_tags(text):
     clean_text = re.sub(r'<.*?>', '', text)
     return clean_text
 
+def write_article_to_file(article_content, file_path):
+    with open(file_path, 'w', encoding='utf-8') as file:
+        file.write(article_content)
+    print(f"Article written to {file_path}")
+
 def get_latest_news(feed_url, count=1):
     feed = feedparser.parse(feed_url)
     title = None
@@ -62,6 +67,12 @@ def monitor_feed(feed_url, interval=10):
                 print(new_entry['content'])
                 ai_article = generate_new_article(new_entry['content'])
 
+                # Define a file path where you want to save the article
+                file_path = "generated_article.txt"
+
+                # Write the article to the file
+                write_article_to_file(ai_article, file_path)
+
 
                 # Register the cleanup function
                 atexit.register(save_seen_entries, seen_entries, last_id)
@@ -85,16 +96,19 @@ def generate_new_article(article):
     response = client.chat.completions.create(
         model="gpt-4o-mini-2024-07-18",
         messages=[
-        {"role": "system", "content": "You are a journalist writing an article for a major news outlet in Belguim for Dutch speakers. Your editor has asked you to rerwrite the following article about United States congress. The article should be written so that it is easy to understand for a general audience. Explain difficult concepts/terminololy. Base your resopnse ONLY on the following article: "},
+        {
+            "role": "system", 
+            "content": "You are a journalist writing an article for a major news outlet in Belgium for Dutch speakers. Your editor has asked you to rewrite the following article about United States congress. The article should be written so that it is easy to understand for a general audience. Explain difficult concepts/terminology. Base your response ONLY on the following article: "
+        },
         {
             "role": "user",
-            "content": {article}
+            "content": article
         }
         ]
     )
+    return response.choices[0].message.content
 
 
     
-
-# Replace with your actual feed URL
-monitor_feed('https://rss.politico.com/congress.xml')
+if __name__ == '__main__':
+    monitor_feed('https://rss.politico.com/congress.xml')
