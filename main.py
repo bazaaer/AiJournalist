@@ -3,7 +3,8 @@ import time
 import re
 import json
 import os
-import atexit
+from datetime import datetime
+import requests
 
 
 def save_seen_entries(seen_entries, last_id, file_path="seen_entries.json"):
@@ -97,7 +98,7 @@ def get_latest_news(feed_url, count=1):
     return news_items
 
 
-def monitor_feed(feed_url, interval=10):
+def monitor_feed(feed_url, interval=10, genertate_image=True):
     seen_entries, last_id = load_seen_entries()
 
     try:
@@ -121,10 +122,13 @@ def monitor_feed(feed_url, interval=10):
                     # Generate AI article based on the content of the new article
                     ai_article = generate_new_article(new_entry['content'])
                     neutral_prompt = genererate_neutral_prompt(new_entry['title'])
-                    try:
-                        ai_image_url = generate_new_image(neutral_prompt)
-                    except Exception as e:
-                        print(f"Error generating image: {e}")
+                    if genertate_image:
+                        try:
+                            ai_image_url = generate_new_image(neutral_prompt)
+                        except Exception as e:
+                            print(f"Error generating image: {e}")
+                            ai_image_url = None
+                    else:
                         ai_image_url = None
 
                     # Write the article to the file
@@ -147,6 +151,8 @@ def monitor_feed(feed_url, interval=10):
 def generate_new_image(prompt):
     from openai import OpenAI
     client = OpenAI()
+    
+    # Generate the image
     ai_image = client.images.generate(
         model="dall-e-3",
         prompt=prompt,
@@ -154,6 +160,29 @@ def generate_new_image(prompt):
         n=1,
     )
     image_url = ai_image.data[0].url
+    
+    # Directory where images will be saved
+    image_directory = "images"
+    
+    # Create directory if it doesn't exist
+    if not os.path.exists(image_directory):
+        os.makedirs(image_directory)
+    
+    # Generate a unique image filename using a timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    image_filename = f"{image_directory}/image_{timestamp}.png"
+    
+    # Download the image
+    response = requests.get(image_url)
+    
+    # Save the image to the 'images' directory
+    if response.status_code == 200:
+        with open(image_filename, "wb") as f:
+            f.write(response.content)
+        print(f"Image saved successfully as {image_filename}.")
+    else:
+        print("Failed to download image.")
+    
     return image_url
 
 
@@ -165,7 +194,7 @@ def genererate_neutral_prompt(prompt):
         messages=[
             {
                 "role": "system",
-                "content": "You are tasked with generating a politically neutral prompt for a new image. The prompt should be suitable for a general audience and should not contain any political bias. Here is the title of an article that you need to generate a prompt for: "
+                "content": "You are tasked with generating a prompt for DALL-E-3 image model that does not break the guidelines based on this article headline. You can generate images of real people, but in a style that makes it obvious the image is not real."
             },
             {
                 "role": "user",
@@ -184,7 +213,7 @@ def generate_new_article(article):
         messages=[
             {
                 "role": "system",
-                "content": "You are a journalist writing an article for a major news outlet in Belgium for Dutch readers. Your editor has asked you to rewrite the following article about United States congress in Dutch. The article should be written so that it is easy to understand for a general Dutch audience. Explain difficult concepts/terminology. Base your response ONLY on the following article: "
+                "content": "You are a journalist writing an article for a major news outlet in Belgium for Dutch readers. Don't translate concepts like 'secret service' literally, but leave them as is. Your editor has asked you to rewrite the following article about United States congress in Dutch. The article should be written so that it is easy to understand for a general Dutch audience. Explain difficult concepts/terminology. Base your response ONLY on the following article: "
             },
             {
                 "role": "user",
