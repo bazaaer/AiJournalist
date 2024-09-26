@@ -1,7 +1,12 @@
-import requests
+from openai import OpenAI
+client = OpenAI()
 
-url = 'https://www.politico.com/rss/politicopicks.xml'
+ai_image = client.images.generate(
+  model="dall-e-2",
+  prompt="a white siamese cat",
+  size="1024x1024",
+  n=1,
+)
 
-
-response = requests.get(url)
-print(response)
+image_url = ai_image.data[0].url
+print(image_url)
