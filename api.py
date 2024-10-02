@@ -49,7 +49,7 @@ def genererate_neutral_prompt(prompt):
         messages=[
             {
                 "role": "system",
-                "content": "You are tasked with generating a prompt for DALL-E-3 image model that does not break the guidelines based on this article headline. You can generate images of real people, but in a style that makes it obvious the image is not real."
+                "content": "You are tasked with generating a prompt for DALL-E-3 image model THAT DOES NOT BREAK ANY GUIDELINES based on this article headline. You can generate images of real people, but in a style that makes it obvious the image is not real."
             },
             {
                 "role": "user",
@@ -72,17 +72,12 @@ def check_article_relevance(article):
                     "type": "object",
                     "required": [
                     "election_relevance",
-                    "input_article"
                     ],
                     "properties": {
                     "election_relevance": {
                         "type": "boolean",
                         "description": "Indicates if the input article is relevant to the presidential election"
-                    },
-                    "input_article": {
-                        "type": "string",
-                        "description": "Content of the input article"
-                    }
+                        },
                     },
                     "additionalProperties": False
                 }
@@ -116,6 +111,22 @@ def generate_new_article(article):
             {
                 "role": "user",
                 "content": article
+            }
+        ]
+    )
+    return response.choices[0].message.content
+
+def generate_new_title(title, article):
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are tasked with generating a new title for the following article in DUTCH. The new title should be engaging and informative, and should capture the essence of the article. Here is the original title and article: "
+            },
+            {
+                "role": "user",
+                "content": title
             }
         ]
     )

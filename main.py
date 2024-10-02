@@ -6,7 +6,7 @@ from datetime import datetime
 import requests
 import feedparser
 
-from api import generate_new_image, genererate_neutral_prompt, check_article_relevance, generate_new_article
+from api import generate_new_image, genererate_neutral_prompt, check_article_relevance, generate_new_article, generate_new_title
 
 
 def save_seen_entries(seen_entries, last_id, file_path="seen_entries.json"):
@@ -45,10 +45,11 @@ def remove_html_tags(text):
     return clean_text
 
 
-def write_article_to_file(article_id, ai_article, image_prompt, ai_image_url, file_path):
+def write_article_to_file(article_id, ai_title, ai_article, image_prompt, ai_image_url, file_path):
     # Create a dictionary with the article details
     article_data = {
         'id': article_id,
+        'title': ai_title,
         'content': ai_article,
         'image_prompt': image_prompt,
         'image': ai_image_url
@@ -126,7 +127,8 @@ def monitor_feed(feed_url, interval=10, genertate_image=True):
 
                     if response['election_relevance']:
                         print("Article is relevant to the presidential election.")
-                        ai_article = generate_new_article(response['input_article'])
+                        ai_title = generate_new_title(new_entry['title'], new_entry['content'])
+                        ai_article = generate_new_article(new_entry['content'])
                         neutral_prompt = genererate_neutral_prompt(new_entry['title'])
                         if genertate_image:
                             try:
@@ -139,7 +141,7 @@ def monitor_feed(feed_url, interval=10, genertate_image=True):
 
                         # Write the article to the file
                         write_article_to_file(
-                            last_id, ai_article, neutral_prompt, ai_image_url, "generated_articles.json")
+                            last_id, ai_title, ai_article, neutral_prompt, ai_image_url, "generated_articles.json")
                     else:
                         print("Article is not relevant to the presidential election.")
                         pass
