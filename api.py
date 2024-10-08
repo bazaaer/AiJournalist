@@ -1,14 +1,16 @@
+from io import BytesIO
+from PIL import Image
+import requests
+from datetime import datetime
+import os
+import json
+import re
+import time
 from openai import OpenAI
 client = OpenAI()
-import time
-import re
-import json
-import os
-from datetime import datetime
-import requests
+
 
 def generate_new_image(prompt, id):
-    
     # Generate the image
     ai_image = client.images.generate(
         model="dall-e-3",
@@ -17,29 +19,31 @@ def generate_new_image(prompt, id):
         n=1,
     )
     image_url = ai_image.data[0].url
-    
+
     # Directory where images will be saved
     image_directory = "images"
-    
+
     # Create directory if it doesn't exist
     if not os.path.exists(image_directory):
         os.makedirs(image_directory)
-    
+
     # Generate a unique image filename using a timestamp
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    image_filename = f"{image_directory}/image_{id}-{timestamp}.png"
-    
+    # Use jpg for compression
+    image_filename = f"{image_directory}/image_{id}.jpg"
+
     # Download the image
     response = requests.get(image_url)
-    
-    # Save the image to the 'images' directory
+
+    # Save the image to the 'images' directory with compression
     if response.status_code == 200:
-        with open(image_filename, "wb") as f:
-            f.write(response.content)
-        print(f"Image saved successfully as {image_filename}.")
+        img = Image.open(BytesIO(response.content))
+
+        # Compress and save the image with quality 85 (you can adjust the value)
+        img.save(image_filename, "JPEG", quality=85)
+        print(f"Compressed image saved successfully as {image_filename}.")
     else:
         print("Failed to download image.")
-    
+
     return image_url
 
 
@@ -49,7 +53,7 @@ def genererate_neutral_prompt(prompt):
         messages=[
             {
                 "role": "system",
-                "content": "You are tasked with generating a prompt for DALL-E-3 image model THAT DOES NOT BREAK ANY GUIDELINES based on this article headline. You can generate images of real people, but in a style that makes it obvious the image is not real."
+                "content": "You are tasked with generating a prompt for DALL-E-3 image model THAT DOES NOT BREAK ANY GUIDELINES based on this article headline. You have to stay POLITICALLY NEUTRAL. You can generate images of real people, but in a style that makes it obvious the image is not real."
             },
             {
                 "role": "user",
@@ -58,6 +62,7 @@ def genererate_neutral_prompt(prompt):
         ]
     )
     return response.choices[0].message.content
+
 
 def check_article_relevance(article):
 
@@ -71,12 +76,12 @@ def check_article_relevance(article):
                 "parameters": {
                     "type": "object",
                     "required": [
-                    "election_relevance",
+                        "election_relevance",
                     ],
                     "properties": {
-                    "election_relevance": {
-                        "type": "boolean",
-                        "description": "Indicates if the input article is relevant to the presidential election"
+                        "election_relevance": {
+                            "type": "boolean",
+                            "description": "Indicates if the input article is relevant to the presidential election"
                         },
                     },
                     "additionalProperties": False
@@ -100,13 +105,14 @@ def check_article_relevance(article):
 
     return arguments
 
+
 def generate_new_article(article):
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
             {
                 "role": "system",
-                "content": "You are a journalist writing an article for a major news outlet in Belgium for Dutch readers. Don't translate concepts like 'secret service' literally, but leave them as is. Your editor has asked you to rewrite the following article about United States congress in Dutch. The article should be written so that it is easy to understand for a general Dutch audience. Explain difficult concepts/terminology. Write your response based ONLY on information found in the following article: "
+                "content": "You are a journalist writing an article for a major news outlet in Belgium for Dutch readers. Don't translate concepts like 'secret service' literally, but leave them as is. Make the article lighter, not too long and easier to read. The article should be written so that it is easy to understand for a general Dutch audience. Explain difficult concepts/terminology. Write your response based ONLY on information found in the following article: "
             },
             {
                 "role": "user",
@@ -114,7 +120,8 @@ def generate_new_article(article):
             }
         ]
     )
-    return response.choices[0].message.content
+    return f"{response.choices[0].message.content} \n\n\n source: www.politico.com"
+
 
 def generate_new_title(title, article):
     response = client.chat.completions.create(

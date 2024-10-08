@@ -8,6 +8,8 @@ import feedparser
 
 from api import generate_new_image, genererate_neutral_prompt, check_article_relevance, generate_new_article, generate_new_title
 
+from upload import create_post, upload_image
+
 
 def save_seen_entries(seen_entries, last_id, file_path="seen_entries.json"):
     data = {
@@ -78,7 +80,18 @@ def write_article_to_file(article_id, ai_title, ai_article, image_prompt, ai_ima
     print(f"Article {article_id} saved to {file_path}.")
 
 
-def get_latest_news(feed_url, count=1):
+def get_latest_news(feed_url, count=6):
+    """Get the latest news articles from a given RSS feed.
+    
+    Args:
+        feed_url (str): The URL of the RSS feed.
+        count (int): The number of articles to retrieve. Usefull for catching up on missed articles.
+        
+    Returns:
+        list: A list of dictionaries containing the article details.
+        
+    """
+
     feed = feedparser.parse(feed_url)
     news_items = []
 
@@ -142,6 +155,15 @@ def monitor_feed(feed_url, interval=10, genertate_image=True):
                         # Write the article to the file
                         write_article_to_file(
                             last_id, ai_title, ai_article, neutral_prompt, ai_image_url, "generated_articles.json")
+                        
+                        # Create a post on WordPress with the generated content
+                        if ai_image_url:
+                            media_id = upload_image(f"image_{last_id}.jpg", f"image_{last_id}.jpg", "image/jpeg")
+                            create_post(ai_article, ai_title, media_id)
+                        else:
+                            media_id = None
+                            create_post(ai_article, ai_title, media_id)
+                        
                     else:
                         print("Article is not relevant to the presidential election.")
                         pass
