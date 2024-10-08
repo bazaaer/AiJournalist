@@ -11,6 +11,15 @@ client = OpenAI()
 
 
 def generate_new_image(prompt, id):
+    """Generate a new image using the DALL-E-3 model and save it to the 'images' directory.
+
+    Args:
+        prompt (str): The prompt to generate the image.
+        id (str): Identifier for the image to be saved.
+
+    Returns:
+       image_url (str): Link where the image is hosted, avalible for half an hour after creation.
+    """
     # Generate the image
     ai_image = client.images.generate(
         model="dall-e-3",
@@ -48,6 +57,14 @@ def generate_new_image(prompt, id):
 
 
 def genererate_neutral_prompt(prompt):
+    """Generates a neutral prompt from a given prompt. The neutral prompt is needed to generate images using the DALL-E-3 model.
+
+    Args:
+        prompt (_str_): A given prompt to generate a neutral prompt from.
+
+    Returns:
+        neutral_promt: The neutral prompt
+    """
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -65,6 +82,14 @@ def genererate_neutral_prompt(prompt):
 
 
 def check_article_relevance(article):
+    """Checks if the given article is relevant to the presidential election.
+
+    Args:
+        article (_type_): article to check for relevance to the presidential election.
+
+    Returns:
+        (bool?) _type_: returns True if the article is relevant to the presidential election, otherwise False.
+    """
 
     tools = [
         {
@@ -107,6 +132,14 @@ def check_article_relevance(article):
 
 
 def generate_new_article(article):
+    """Generate a new article based on the given article.
+
+    Args:
+        article (_type_): An article to generate a new article from.
+
+    Returns:
+        article: The rewritten article.
+    """
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -124,6 +157,15 @@ def generate_new_article(article):
 
 
 def generate_new_title(title, article):
+    """Generates a new title for the given article.
+
+    Args:
+        title (str): The original title of the article.
+        article (): edited article to generate a new title from.
+
+    Returns:
+        str : Generated title for the article.
+    """
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
