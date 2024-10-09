@@ -5,6 +5,9 @@ import os
 from datetime import datetime
 import requests
 import feedparser
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
 
 from api import generate_new_image, genererate_neutral_prompt, check_article_relevance, generate_new_article, generate_new_title
 
@@ -80,7 +83,7 @@ def write_article_to_file(article_id, ai_title, ai_article, image_prompt, ai_ima
     print(f"Article {article_id} saved to {file_path}.")
 
 
-def get_latest_news(feed_url, count=6):
+def get_latest_news(feed_url, count=1):
     """Get the latest news articles from a given RSS feed.
     
     Args:

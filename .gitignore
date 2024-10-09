@@ -1,2 +1,3 @@
 API_KEY
 __pycache__/
+.env
