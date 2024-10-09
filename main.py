@@ -5,6 +5,7 @@ import os
 from datetime import datetime
 import requests
 import feedparser
+import sys
 # Load environment variables from .env file
 from dotenv import load_dotenv
 load_dotenv()
@@ -117,13 +118,13 @@ def get_latest_news(feed_url, count=1):
     return news_items
 
 
-def monitor_feed(feed_url, interval=10, genertate_image=True):
+def monitor_feed(feed_url, interval=10, genertate_image=True, count=1):
     seen_entries, last_id = load_seen_entries()
 
     try:
         while True:
             # Call the updated get_latest_news to get a list of articles
-            news_items = get_latest_news(feed_url)
+            news_items = get_latest_news(feed_url, count)
 
             # Loop through each article in the list
             for article in news_items:
@@ -186,4 +187,7 @@ def monitor_feed(feed_url, interval=10, genertate_image=True):
 
 
 if __name__ == '__main__':
-    monitor_feed('https://rss.politico.com/congress.xml')
+    url = 'https://rss.politico.com/congress.xml'
+    # Get the extra parameter if provided
+    article_count = sys.argv[1] if len(sys.argv) > 1 else None
+    monitor_feed(url, count=int(article_count) if article_count else 1)
