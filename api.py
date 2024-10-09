@@ -131,6 +131,133 @@ def check_article_relevance(article):
     return arguments
 
 
+def apply_tags(article):
+    """Apply tags to the given article.
+
+    Args:
+        article: article to apply tags to.
+
+    Returns:
+        a list of tags
+    """
+
+    tools = [
+        {
+            "type": "function",
+            "function": {
+                "name": "choose_tags",
+                "description": "The model needs to choose tags from a list to apply to an article",
+                "strict": True,
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "tags": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "-",
+                                    "Biden",
+                                    "Trump",
+                                    "Harris",
+                                    "Biden-Harris",
+                                    "Alabama",
+                                    "Alaska",
+                                    "Arizona",
+                                    "Arkansas",
+                                    "California",
+                                    "Colorado",
+                                    "Connecticut",
+                                    "Delaware",
+                                    "Florida",
+                                    "Georgia",
+                                    "Hawaii",
+                                    "Idaho",
+                                    "Illinois",
+                                    "Indiana",
+                                    "Iowa",
+                                    "Kansas",
+                                    "Kentucky",
+                                    "Louisiana",
+                                    "Maine",
+                                    "Maryland",
+                                    "Massachusetts",
+                                    "Michigan",
+                                    "Minnesota",
+                                    "Mississippi",
+                                    "Missouri",
+                                    "Montana",
+                                    "Nebraska",
+                                    "Nevada",
+                                    "New Hampshire",
+                                    "New Jersey",
+                                    "New Mexico",
+                                    "New York",
+                                    "North Carolina",
+                                    "North Dakota",
+                                    "Ohio",
+                                    "Oklahoma",
+                                    "Oregon",
+                                    "Pennsylvania",
+                                    "Rhode Island",
+                                    "South Carolina",
+                                    "South Dakota",
+                                    "Tennessee",
+                                    "Texas",
+                                    "Utah",
+                                    "Vermont",
+                                    "Virginia",
+                                    "Washington",
+                                    "West Virginia",
+                                    "Wisconsin",
+                                    "Wyoming",
+                                    "Washington D.C.",
+                                    "Puerto Rico",
+                                    "Guam",
+                                    "U.S. Virgin Islands",
+                                    "American Samoa",
+                                    "Northern Mariana Islands",
+                                    "Senate",
+                                    "House",
+                                    "Congress",
+                                    "Supreme Court",
+                                    "White House",
+                                    "Capitol",
+                                    "Democrat",
+                                    "Republican",
+                                    "Independent",
+                                    "Libertarian",
+                                    "Green Party",
+                                    "Constitution Party",
+                                    "Foreign News",
+                                    "War"
+                                ]
+                            }
+                        }
+                    },
+                    "required": ["tags"],
+                    "additionalProperties": False
+                }
+            }
+        }
+    ]
+
+    messages = [
+        {"role": "user", "content": article}
+    ]
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=messages,
+        tools=tools,
+    )
+
+    tool_call = response.choices[0].message.tool_calls[0]
+    arguments = json.loads(tool_call.function.arguments)
+
+    return arguments
+
+
 def generate_new_article(article):
     """Generate a new article based on the given article.
 

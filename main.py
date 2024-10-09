@@ -10,7 +10,7 @@ import sys
 from dotenv import load_dotenv
 load_dotenv()
 
-from api import generate_new_image, genererate_neutral_prompt, check_article_relevance, generate_new_article, generate_new_title
+from api import generate_new_image, genererate_neutral_prompt, check_article_relevance, generate_new_article, generate_new_title, apply_tags
 
 from upload import create_post, upload_image
 
@@ -118,7 +118,7 @@ def get_latest_news(feed_url, count=1):
     return news_items
 
 
-def monitor_feed(feed_url, interval=10, genertate_image=True, count=1):
+def monitor_feed(feed_url, interval=10, genertate_image=False, count=1):
     seen_entries, last_id = load_seen_entries()
 
     try:
@@ -144,10 +144,12 @@ def monitor_feed(feed_url, interval=10, genertate_image=True, count=1):
 
                     if response['election_relevance']:
                         print("Article is relevant to the presidential election.")
+                        ai_tags = apply_tags(new_entry['content'])
+                        print(f"Tags: {ai_tags}")
                         ai_title = generate_new_title(new_entry['title'], new_entry['content'])
                         ai_article = generate_new_article(new_entry['content'])
-                        neutral_prompt = genererate_neutral_prompt(new_entry['title'])
                         if genertate_image:
+                            neutral_prompt = genererate_neutral_prompt(new_entry['title'])
                             try:
                                 ai_image_url = generate_new_image(neutral_prompt, last_id)
                             except Exception as e:
@@ -155,6 +157,7 @@ def monitor_feed(feed_url, interval=10, genertate_image=True, count=1):
                                 ai_image_url = None
                         else:
                             ai_image_url = None
+                            neutral_prompt = None
 
                         # Write the article to the file
                         write_article_to_file(
