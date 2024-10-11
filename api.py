@@ -10,15 +10,15 @@ from openai import OpenAI
 client = OpenAI()
 
 
-def generate_new_image(prompt, id):
+def generate_new_image(prompt, title):
     """Generate a new image using the DALL-E-3 model and save it to the 'images' directory.
 
     Args:
         prompt (str): The prompt to generate the image.
-        id (str): Identifier for the image to be saved.
+        title (str): Title for the image to be saved.
 
     Returns:
-       image_url (str): Link where the image is hosted, avalible for half an hour after creation.
+       image_url (str): Link where the image is hosted, available for half an hour after creation.
     """
     # Generate the image
     ai_image = client.images.generate(
@@ -28,27 +28,28 @@ def generate_new_image(prompt, id):
         n=1,
     )
     image_url = ai_image.data[0].url
+    print(f"Image generated successfully. URL: {image_url}")
 
     # Directory where images will be saved
-    image_directory = "images"
+    image_directory = "temp_images"
 
     # Create directory if it doesn't exist
     if not os.path.exists(image_directory):
         os.makedirs(image_directory)
 
-    # Generate a unique image filename using a timestamp
-    # Use jpg for compression
-    image_filename = f"{image_directory}/image_{id}.jpg"
+    # Generate a unique image filename
+    formatted_title = title.lower().replace(" ", "_")
+    image_filename = f"{image_directory}/image_{formatted_title}.webp"
 
     # Download the image
     response = requests.get(image_url)
 
-    # Save the image to the 'images' directory with compression
+    # Save the image with compression
     if response.status_code == 200:
         img = Image.open(BytesIO(response.content))
 
-        # Compress and save the image with quality 85 (you can adjust the value)
-        img.save(image_filename, "JPEG", quality=85)
+        # Compress and save the image as WEBP with quality 85 (you can adjust the value)
+        img.save(image_filename, "WEBP", quality=85)
         print(f"Compressed image saved successfully as {image_filename}.")
     else:
         print("Failed to download image.")

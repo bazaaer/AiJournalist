@@ -1,118 +1,54 @@
-import time
-import re
-import json
 import os
-from datetime import datetime
-import requests
-import feedparser
 import sys
-# Load environment variables from .env file
+import time
+import feedparser
+import markdown
 from dotenv import load_dotenv
-load_dotenv()
+from pymongo import MongoClient
 
-from api import generate_new_image, genererate_neutral_prompt, check_article_relevance, generate_new_article, generate_new_title, apply_tags
-
+from api import (apply_tags, check_article_relevance, generate_new_article,
+                 generate_new_image, generate_new_title,
+                 genererate_neutral_prompt)
 from upload import create_post, upload_image
 
-import markdown
+# Load environment variables from .env file
+load_dotenv()
 
-def convert_markdown_to_html(markdown_text):
-    html = markdown.markdown(markdown_text)
-    return html
+# Create a MongoDB client once and reuse it
+mongo_user = os.getenv("MONGO_USER", "root")
+mongo_password = os.getenv("MONGO_PASSWORD", "examplepassword")
+mongo_host = os.getenv("MONGO_HOST", "mongodb")
+mongo_port = os.getenv("MONGO_PORT", "27017")
+mongo_uri = f"mongodb://{mongo_user}:{mongo_password}@{mongo_host}:{mongo_port}"
+client = MongoClient(mongo_uri)
+db = client.feed_monitor
+articles_collection = db.articles
 
+def save_article_entry(entry):
+    articles_collection.insert_one(entry)
 
-def save_seen_entries(seen_entries, last_id, file_path="seen_entries.json"):
-    data = {
-        'seen_entries': seen_entries,
-        'last_id': last_id
-    }
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
-
-
-def load_seen_entries(file_path="seen_entries.json"):
-    if os.path.exists(file_path):
-        with open(file_path, 'r') as file:
-            data = json.load(file)
-            seen_entries = data.get('seen_entries', [])
-            last_id = data.get('last_id', 0)
-    else:
-        seen_entries = []
-        last_id = 0
-
-    return seen_entries, last_id
-
-
-def entry_exists(seen_entries, new_entry):
-    """Check if the new entry already exists in the seen entries."""
-    for entry in seen_entries:
-        if entry['link'] == new_entry['link']:  # Use link or another identifier to check
-            return True
-    return False
-
-
-def remove_html_tags(text):
-    """Remove HTML tags from a string."""
-    clean_text = re.sub(r'<.*?>', '', text)
-    return clean_text
-
-
-def write_article_to_file(article_id, ai_title, ai_article, image_prompt, ai_image_url, file_path):
-    # Create a dictionary with the article details
-    article_data = {
-        'id': article_id,
-        'title': ai_title,
-        'content': ai_article,
-        'image_prompt': image_prompt,
-        'image': ai_image_url
-    }
-
-    # Check if the file already exists
-    if os.path.exists(file_path):
-        # If the file exists, load its current contents
-        with open(file_path, 'r') as file:
-            try:
-                articles = json.load(file)
-            except json.JSONDecodeError:
-                # If the file is empty or corrupted, start fresh
-                articles = []
-    else:
-        # If the file does not exist, start with an empty list
-        articles = []
-
-    # Add the new article to the list of articles
-    articles.append(article_data)
-
-    # Write the updated articles list back to the file
-    with open(file_path, 'w') as file:
-        json.dump(articles, file, indent=4)
-
-    print(f"Article {article_id} saved to {file_path}.")
-
+def entry_exists(link):
+    """Check if the new entry already exists in the articles collection."""
+    return articles_collection.find_one({"link": link}) is not None
 
 def get_latest_news(feed_url, count=1):
     """Get the latest news articles from a given RSS feed.
     
     Args:
         feed_url (str): The URL of the RSS feed.
-        count (int): The number of articles to retrieve. Usefull for catching up on missed articles.
+        count (int): The number of articles to retrieve. Useful for catching up on missed articles.
         
     Returns:
         list: A list of dictionaries containing the article details.
         
     """
-
     feed = feedparser.parse(feed_url)
     news_items = []
-
     for entry in feed.entries[:count]:
         title = entry.title
         link = entry.link
         published = entry.published
-        content = None
-        if hasattr(entry, 'content'):
-            content = entry.content[0].value
-            content = remove_html_tags(content)
+        content = entry.get('content', [{'value': ''}])[0]['value']
 
         news_items.append({
             'title': title,
@@ -120,13 +56,9 @@ def get_latest_news(feed_url, count=1):
             'published': published,
             'content': content
         })
-
     return news_items
 
-
-def monitor_feed(feed_url, interval=10, genertate_image=False, web_image=False, count=1):
-    seen_entries, last_id = load_seen_entries()
-
+def monitor_feed(feed_url, interval=10, generate_image=True, count=1):
     try:
         while True:
             # Call the updated get_latest_news to get a list of articles
@@ -134,53 +66,46 @@ def monitor_feed(feed_url, interval=10, genertate_image=False, web_image=False, 
 
             # Loop through each article in the list
             for article in news_items:
-                new_entry = {'id': last_id + 1,
-                             'title': article['title'],
-                             'link': article['link'],
-                             'published': article['published'],
-                             'content': article['content']}
-
-                if not entry_exists(seen_entries, new_entry):
-                    last_id = last_id + 1
-                    seen_entries.append(new_entry)
+                if not entry_exists(article['link']):
                     print(f"New article found: {article['title']}")
 
                     # Generate AI article based on the content of the new article
-                    response = check_article_relevance(new_entry['content'])
+                    response = check_article_relevance(article['content'])
 
                     if response['election_relevance']:
                         print("Article is relevant to the presidential election.")
-                        ai_tags = apply_tags(new_entry['content'])
+                        ai_tags = apply_tags(article['content'])
                         print(f"Tags: {ai_tags}")
-                        ai_title = generate_new_title(new_entry['title'], new_entry['content'])
-                        ai_article = generate_new_article(new_entry['content'])
-                        if genertate_image:
-                            neutral_prompt = genererate_neutral_prompt(new_entry['title'])
+                        ai_title = generate_new_title(article['title'], article['content'])
+                        ai_article = generate_new_article(article['content'])
+                        ai_image_url = None
+                        if generate_image:
+                            neutral_prompt = genererate_neutral_prompt(article['title'])
                             try:
-                                ai_image_url = generate_new_image(neutral_prompt, last_id)
+                                ai_image_url = generate_new_image(neutral_prompt, article['title'])
                             except Exception as e:
                                 print(f"Error generating image: {e}")
-                                ai_image_url = None
                         else:
-                            ai_image_url = None
                             neutral_prompt = None
 
-                        # Write the article to the file
-                        write_article_to_file(
-                            last_id, ai_title, ai_article, neutral_prompt, ai_image_url, "generated_articles.json")
-                        
+                        # Write the article to MongoDB
+                        article.update({
+                            'ai_title': ai_title,
+                            'ai_content': ai_article,
+                            'image_prompt': neutral_prompt,
+                            'image': ai_image_url,
+                            'tags': ai_tags,
+                            'election_relevance': True
+                        })
+                        save_article_entry(article)
+
                         # Create a post on WordPress with the generated content
-                        if ai_image_url:
-                            media_id = upload_image(f"image_{last_id}.jpg", f"image_{last_id}.jpg", "image/jpeg")
-                            create_post(convert_markdown_to_html(ai_article), ai_title, media_id, ai_tags)
-                        else:
-                            media_id = None
-                            create_post(convert_markdown_to_html(ai_article), ai_title, media_id, ai_tags)
-                        
+                        media_id = upload_image(f"image_{article['title'].lower().replace(" ", "_")}.webp", f"image_{article['title'].lower().replace(" ", "_")}.webp", "image/webp") if ai_image_url else None
+                        create_post(markdown.markdown(ai_article), ai_title, media_id, ai_tags)
                     else:
                         print("Article is not relevant to the presidential election.")
-                        pass
-
+                        article['election_relevance'] = False
+                        save_article_entry(article)
                 else:
                     print(f"Article '{article['title']}' already seen.")
 
@@ -189,11 +114,7 @@ def monitor_feed(feed_url, interval=10, genertate_image=False, web_image=False, 
             print()
 
     except KeyboardInterrupt:
-        print("\nProgram interrupted. Saving entries...")
-        # Save the seen entries and last ID before exiting
-        save_seen_entries(seen_entries, last_id)
-
-
+        print("\nProgram interrupted. Exiting...")
 
 if __name__ == '__main__':
     url = 'https://rss.politico.com/congress.xml'

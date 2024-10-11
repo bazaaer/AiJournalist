@@ -153,7 +153,7 @@ def create_post(content, post_title, media_id=None, tags='-'):
 def upload_image(image_path, image_name, content_type):
     media_endpoint = f"{url}/media"
 
-    with open(f"images/{image_path}", 'rb') as img_file:
+    with open(f"temp_images/{image_path}", 'rb') as img_file:
         # Correct format for `files` parameter
         files = {'file': (image_name, img_file, content_type)}
 
@@ -165,6 +165,8 @@ def upload_image(image_path, image_name, content_type):
         # Successful upload
         media_id = response.json().get('id')
         print(f"Image uploaded successfully with ID: {media_id}")
+        os.remove(f'temp_images/{image_path}')
+        print(f"Image deleted: {image_path}")
         return media_id
     else:
         print(f"Failed to upload image (status code {
