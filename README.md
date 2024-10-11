@@ -38,6 +38,6 @@ OPENAI_API_KEY=<your-openai-api-key>
 After setting up the environment variables, you can run the project by running the following command in the terminal:
 
 ```bash
-python main.py [article_count]
+python main.py [article_count] [noimg/aiimg/webimg]
 ```
 Article count is a parameter to set how many articles the feedparser function fetches at once. Usefull for catching up in articles if the application was down. Default=1 --> fetches only the most recent article.
