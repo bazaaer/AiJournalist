@@ -4,8 +4,6 @@ import requests
 from datetime import datetime
 import os
 import json
-import re
-import time
 from openai import OpenAI
 client = OpenAI()
 
@@ -307,4 +305,23 @@ def generate_new_title(title, article):
             }
         ]
     )
+    return response.choices[0].message.content
+
+def generate_web_search(title, article):
+    """Generates a web search for an image based on the given article title."""
+
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "Extract full names from the article. If there are multiple name, separate them by 'and' and only pick the 2 most important names. If the article contains no full names, decribe the article in 1 scentence: "
+            },
+            {
+                "role": "user",
+                "content": f"{title}\n\n{article}"
+            }
+        ]
+    )
+    print("GENERATED" + response.choices[0].message.content)
     return response.choices[0].message.content
