@@ -14,6 +14,12 @@ from api import generate_new_image, genererate_neutral_prompt, check_article_rel
 
 from upload import create_post, upload_image
 
+import markdown
+
+def convert_markdown_to_html(markdown_text):
+    html = markdown.markdown(markdown_text)
+    return html
+
 
 def save_seen_entries(seen_entries, last_id, file_path="seen_entries.json"):
     data = {
@@ -118,7 +124,7 @@ def get_latest_news(feed_url, count=1):
     return news_items
 
 
-def monitor_feed(feed_url, interval=10, genertate_image=False, count=1):
+def monitor_feed(feed_url, interval=10, genertate_image=False, web_image=False, count=1):
     seen_entries, last_id = load_seen_entries()
 
     try:
@@ -166,10 +172,10 @@ def monitor_feed(feed_url, interval=10, genertate_image=False, count=1):
                         # Create a post on WordPress with the generated content
                         if ai_image_url:
                             media_id = upload_image(f"image_{last_id}.jpg", f"image_{last_id}.jpg", "image/jpeg")
-                            create_post(ai_article, ai_title, media_id)
+                            create_post(convert_markdown_to_html(ai_article), ai_title, media_id, ai_tags)
                         else:
                             media_id = None
-                            create_post(ai_article, ai_title, media_id)
+                            create_post(convert_markdown_to_html(ai_article), ai_title, media_id, ai_tags)
                         
                     else:
                         print("Article is not relevant to the presidential election.")
