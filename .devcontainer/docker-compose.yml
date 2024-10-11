@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  python:
+    image: mcr.microsoft.com/devcontainers/python:1-3.12-bullseye
+    environment:
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - mongodb
+    networks:
+      - internal_network
+    volumes:
+      - workspace_data:/workspace  # Use a named volume for the workspace
+    command: tail -f /dev/null  # Keeps the container running indefinitely
+
+  mongodb:
+    image: mongo:6
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: examplepassword
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - internal_network
+
+volumes:
+  mongodb_data:
+  workspace_data:  # Named volume for storing the cloned repository
+
+networks:
+  internal_network:
+    driver: bridge
