@@ -9,7 +9,7 @@
                                                               
                                               
 ----
-This project is a couple of python scripts that work together to generate a news article based on the output of a rss (feed). 
+This project is a couple of python scripts that work together to generate \n a news article based on the output of a rss (feed). 
 </pre>
 </div>
 
