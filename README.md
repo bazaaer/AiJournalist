@@ -7,11 +7,11 @@
 | | | |_| |_  /\__/ / (_) | |_| | |  | | | | (_| | | \__ \ |_ 
 \_| |_/\___/  \____/ \___/ \__,_|_|  |_| |_|\__,_|_|_|___/\__|
                                                               
-                                                              
-                                                    ----
+                                              
+----
 This project is a couple of python scripts that work together to generate a news article based on the output of a rss (feed). 
 </pre>
-<br>
+</div>
 
 ## Table of contents
 
