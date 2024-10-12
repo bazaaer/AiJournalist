@@ -1,4 +1,17 @@
-# AI Journalist
+<div align="center">
+<pre>
+  ___  _____     ___                              _ _     _   
+ / _ \|_   _|   |_  |                            | (_)   | |  
+/ /_\ \ | |       | | ___  _   _ _ __ _ __   __ _| |_ ___| |_ 
+|  _  | | |       | |/ _ \| | | | '__| '_ \ / _` | | / __| __|
+| | | |_| |_  /\__/ / (_) | |_| | |  | | | | (_| | | \__ \ |_ 
+\_| |_/\___/  \____/ \___/ \__,_|_|  |_| |_|\__,_|_|_|___/\__|
+                                                              
+                                                              
+                                                    ----
+This project is a couple of python scripts that work together to generate a news article based on the output of a rss (feed). 
+</pre>
+<br>
 
 ## Table of contents
 
@@ -59,8 +72,8 @@ Article count is a parameter to set how many articles the feedparser function fe
 
 - python:1-3.12-bullseye [![Python: 1.3.12](https://img.shields.io/badge/Python-3.12.bullseye-green)](https://hub.docker.com/layers/library/python/3.12-bullseye/images/sha256-c820d5e7133d9017e324fc31988e243dca9f4e72721733c34f86b46b340aa5b7?context=explore)
 - - Python dependencies can be found in the requirements.txt file.
-- mongo:6 [![Mongo: 6](https://img.shields.io/badge/Mongo-6-green)](https://hub.docker.com/layers/library/mongo/6/images/sha256-7b3b3b3b1
-- redis:6 [![Redis: 6](https://img.shields.io/badge/Redis-6-green)](https://hub.docker.com/layers/library/redis/6/images/sha256-7b3b3b3b1
+- mongo:6 [![Mongo: 6](https://img.shields.io/badge/Mongo-6-green)](https://hub.docker.com/layers/library/mongo/6/images/sha256-7b3b3b3b1)
+- redis:6 [![Redis: 6](https://img.shields.io/badge/Redis-6-green)](https://hub.docker.com/layers/library/redis/6/images/sha256-7b3b3b3b1)
 
 ## Contributors
 
