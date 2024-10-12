@@ -7,7 +7,7 @@
 | | | |_| |_  /\__/ / (_) | |_| | |  | | | | (_| | | \__ \ |_ 
 \_| |_/\___/  \____/ \___/ \__,_|_|  |_| |_|\__,_|_|_|___/\__|
                                                               
-                                              
+[![Python: 1.3.12](https://img.shields.io/badge/Python-3.12.bullseye-blue)](https://hub.docker.com/layers/library/python/3.12-bullseye/images/sha256-c820d5e7133d9017e324fc31988e243dca9f4e72721733c34f86b46b340aa5b7?context=explore) [![Mongo: 6](https://img.shields.io/badge/Mongo-6-green)](https://hub.docker.com/layers/library/mongo/6/images/sha256-7b3b3b3b1) [![Redis: 6](https://img.shields.io/badge/Redis-6-red)](https://hub.docker.com/layers/library/redis/6/images/sha256-7b3b3b3b1)
 ----
 This project is a couple of python scripts that work together to generate
 a news article based on the output of a rss (feed). 
@@ -77,10 +77,10 @@ To add a new tag you will need to create it via wordpress. After that you can ad
 
 ## Dependencies
 
-- python:1-3.12-bullseye [![Python: 1.3.12](https://img.shields.io/badge/Python-3.12.bullseye-green)](https://hub.docker.com/layers/library/python/3.12-bullseye/images/sha256-c820d5e7133d9017e324fc31988e243dca9f4e72721733c34f86b46b340aa5b7?context=explore)
+- python:1-3.12-bullseye 
 - - Python dependencies can be found in the requirements.txt file.
-- mongo:6 [![Mongo: 6](https://img.shields.io/badge/Mongo-6-green)](https://hub.docker.com/layers/library/mongo/6/images/sha256-7b3b3b3b1)
-- redis:6 [![Redis: 6](https://img.shields.io/badge/Redis-6-green)](https://hub.docker.com/layers/library/redis/6/images/sha256-7b3b3b3b1)
+- mongo:6 
+- redis:6 
 
 ## Contributors
 
