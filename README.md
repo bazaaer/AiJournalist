@@ -61,6 +61,8 @@ Now you can open the project in a devcontainer. In visual studio code, you can d
 
 ## Usage
 
+### Running the project
+
 To run the project, you need to run the following command in the terminal:
 
 ```bash
@@ -68,6 +70,10 @@ python main.py [article_count] [noimg/aiimg/webimg]
 ```
 
 Article count is a parameter to set how many articles the feedparser function fetches at once. Usefull for catching up in articles if the application was down. By default this is set to 1. wich will fetch the most recent article.
+
+### Adding new tags
+
+To add a new tag you will need to create it via wordpress. After that you can add the tag to the `tags` list in the `api.py` script around line 160.
 
 ## Dependencies
 
