@@ -2,7 +2,7 @@
 
 # Pull the latest images
 @echo "Pulling the latest images"
-docker compos pull
+docker compose pull
 
 @echo "Shutting down containers if they are running"
 docker compose down
