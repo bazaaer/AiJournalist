@@ -33,7 +33,7 @@ This project is a couple of python scripts that work together to generate a news
 
 The project is then ran as main.py. Which keeps checking if the rss feed has new articles and if it does, it generates an article and uploads it to the website.
 
-## Installation
+## Installation (to edit the project)
 
 To install the project, you need docker and docker-compose installed on your machine. You can install docker and docker-compose by following the instructions on the [official docker website](https://docs.docker.com/get-docker/).
 
@@ -59,17 +59,50 @@ REDIS_PORT=6379
 Now you can open the project in a devcontainer. In visual studio code, you can do this by pressing `F1` and typing `Remote-Containers: Open Folder in Container...`. Then select the folder where you cloned the project. Or `Reopen in Container` if you already have the project open.
 
 
-## Usage
+## Usage (to run the project)
+
+### Downloading the project
+
+To download the project, you need to run the following command in the terminal:
+
+```bash
+git clone 
+```
+
+Once you have downloaded the project, you need to navigate to the project folder and add the following environment variables to the `.env` file:
+(Don't forget to fill in the variables with your own data)
+
+```env
+WP_URL=https://< YOUR WORDPRESS URL >/wp-json/wp/v2
+WP_USER=<WORDPRESS USER >
+WP_PASSWORD=<WORDPRESS PASSWORD (API KEY)>
+OPENAI_API_KEY=<OPENAI API
+BING_API_KEY=<BING API KEY>
+MONGO_USER=<MONGO USER>
+MONGO_PASSWORD=<MONGO PASSWORD>
+MONGO_HOST=mongodb
+MONGO_PORT=27017
+REDIS_HOST=redis
+REDIS_PORT=6379
+COUNT=2 (Amount of articles to backlog)
+IMG_OPTION= (Options: webimg/aiimg/noimg)
+```
 
 ### Running the project
 
 To run the project, you need to run the following command in the terminal:
 
+When on linux: 
+
 ```bash
-python main.py [article_count] [noimg/aiimg/webimg]
+bash run.sh
 ```
 
-Article count is a parameter to set how many articles the feedparser function fetches at once. Usefull for catching up in articles if the application was down. By default this is set to 1. wich will fetch the most recent article.
+When on windows:
+
+```bash
+run.bat
+```
 
 ### Adding new tags
 
