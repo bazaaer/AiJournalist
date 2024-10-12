@@ -17,6 +17,7 @@ a news article based on the output of a rss (feed).
 ## Table of contents
 
 - [Description](#description)
+- [Getting the API keys needed for the project](#getting-the-api-keys-needed-for-the-project)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Dependencies](#dependencies)
@@ -32,6 +33,16 @@ This project is a couple of python scripts that work together to generate a news
 - The `main.py` script fetches a set amount of recent articles from the rss feed and checks if they are in the `mongo database`. If they are not, it generates an image that is politically neutral and a news article based on the article's content. The article is then saved in the `mongo database` file.
 
 The project is then ran as main.py. Which keeps checking if the rss feed has new articles and if it does, it generates an article and uploads it to the website.
+
+## Getting the API keys needed for the project
+
+OPENAI API KEY: You can get the openai api key by signing up on the [openai website](https://platform.openai.com/signup). After signing up, you can get the api key from the [api keys page](https://platform.openai.com/account/api-keys).
+
+BING API KEY
+You can get the bing api key by signing up on the [microsoft azure website](https://azure.microsoft.com/en-us/). After signing up, you can get the api key from the [azure portal](https://portal.azure.com/).
+
+WORDPRESS API KEY
+You can get the wordpress api key by signing up on the [wordpress website](https://wordpress.com/). After signing up, you can get the api key from the [wordpress api page](https://developer.wordpress.com/apps/new/).
 
 ## Installation (to edit the project)
 
@@ -57,7 +68,6 @@ REDIS_PORT=6379
 ```
 
 Now you can open the project in a devcontainer. In visual studio code, you can do this by pressing `F1` and typing `Remote-Containers: Open Folder in Container...`. Then select the folder where you cloned the project. Or `Reopen in Container` if you already have the project open.
-
 
 ## Usage (to run the project)
 
@@ -114,6 +124,10 @@ To add a new tag you will need to create it via wordpress. After that you can ad
 - - Python dependencies can be found in the requirements.txt file.
 - mongo:6 
 - redis:6 
+- Wordpress plugins:
+- - Big File Uploads (https://infiniteuploads.com/support/?utm_source=bfu_plugin&utm_medium=plugin&utm_campaign=bfu_plugin&utm_term=support&utm_content=meta)
+- - WP Add Mime Types (https://wordpress.org/plugins/wp-add-mime-types/)
+-- Application Passwords (https://wordpress.org/plugins/application-passwords/)
 
 ## Contributors
 
