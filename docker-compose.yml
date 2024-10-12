@@ -1,0 +1,49 @@
+services:
+  python:
+    image: ghcr.io/bazaaer/aijournalist-backend:main
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+      - redis
+    networks:
+      - internal_network
+    restart: unless-stopped
+
+  celery_worker:
+    image: ghcr.io/bazaaer/aijournalist-backend:main
+    command: celery -A main.celery_app worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - python
+    networks:
+      - internal_network
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+
+  mongodb:
+    image: mongo:6
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - internal_network
+
+  redis:
+    image: redis:6
+    restart: unless-stopped
+    networks:
+      - internal_network
+
+volumes:
+  mongodb_data:
+
+networks:
+  internal_network:
+    driver: bridge
