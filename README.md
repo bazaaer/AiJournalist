@@ -128,9 +128,9 @@ To add a new tag you will need to create it via wordpress. After that you can ad
 - mongo:6 
 - redis:6 
 - Wordpress plugins:
-- - Big File Uploads (https://infiniteuploads.com/support/?utm_source=bfu_plugin&utm_medium=plugin&utm_campaign=bfu_plugin&utm_term=support&utm_content=meta)
-- - WP Add Mime Types (https://wordpress.org/plugins/wp-add-mime-types/)
--- Application Passwords (https://wordpress.org/plugins/application-passwords/)
+- - [Big File Uploads ](https://infiniteuploads.com/support/?utm_source=bfu_plugin&utm_medium=plugin&utm_campaign=bfu_plugin&utm_term=support&utm_content=meta)
+- - [WP Add Mime Types ](https://wordpress.org/plugins/wp-add-mime-types/)
+-- [Application Passwords ](https://wordpress.org/plugins/application-passwords/)
 
 ## Contributors
 
