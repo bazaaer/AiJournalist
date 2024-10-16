@@ -21,8 +21,8 @@ Make sure you have [docker](https://www.docker.com/) installed on your system
 
 - [Description](#Description)
 - [Getting the API keys needed for the project](#getting-the-api-keys-needed-for-the-project)
-- [Installation (to edit the project)](#Installation-(to-edit-the-project))
-- [Usage (to run/use the project)](#Usage-(to-run/use-the-project))
+- [Installation (to edit the project)](#installation-to-edit-the-project)
+- [Usage (to run/use the project)](#usage-to-runuse-the-project)
 - [Dependencies](#Dependencies)
 - [Contributors](#Contributors)
 - [Thanks](#Thanks)
@@ -91,7 +91,7 @@ MONGO_HOST=mongodb
 MONGO_PORT=27017
 REDIS_HOST=redis
 REDIS_PORT=6379
-COUNT=2 (Amount of articles to backlog)
+COUNT=1 (Amount of articles to backlog)
 IMG_OPTION= (Options: webimg/aiimg/noimg)
 ```
 
