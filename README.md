@@ -19,9 +19,9 @@ Make sure you have [docker](https://www.docker.com/) installed on your system
 
 ## Table of contents
 
-- [Description](#description)
+- [Description](#Description)
 - [Getting the API keys needed for the project](#getting-the-api-keys-needed-for-the-project)
-- [Installation](#installation)
+- [Installation](#Installation-(to-edit-the-project))
 - [Usage](#usage)
 - [Dependencies](#dependencies)
 - [Contributors](#contributors)
