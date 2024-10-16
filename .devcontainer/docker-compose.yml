@@ -24,7 +24,7 @@ services:
 
   mongodb:
     image: mongo:6
-    restart: always
+    restart: unless-stopped
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
@@ -35,7 +35,7 @@ services:
 
   redis:
     image: redis:6
-    restart: always
+    restart: unless-stopped
     networks:
       - internal_network
 
