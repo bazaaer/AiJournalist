@@ -80,11 +80,11 @@ To download the project, navigate too the [release page](https://github.com/baza
 Extract the zipfile and fill in the `EXAMPLE.env` and rename this file to `.env`
 
 ```env
-WP_URL=https://< YOUR WORDPRESS URL >/wp-json/wp/v2
-WP_USER=<WORDPRESS USER >
+WP_URL=https://<YOUR WORDPRESS URL>/wp-json/wp/v2
+WP_USER=<WORDPRESS USER>
 WP_PASSWORD=<WORDPRESS PASSWORD (API KEY)>
-OPENAI_API_KEY=<OPENAI API
-BING_API_KEY=<BING API KEY>
+OPENAI_API_KEY=<OPENAI API>
+BING_API_KEY=<BING API KEY> # Only needed when using webimg as IMG_OPTION
 MONGO_USER=<MONGO USER>
 MONGO_PASSWORD=<MONGO PASSWORD>
 MONGO_HOST=mongodb
