@@ -72,18 +72,12 @@ REDIS_PORT=6379
 
 Now you can open the project in a devcontainer. In visual studio code, you can do this by pressing `F1` and typing `Remote-Containers: Open Folder in Container...`. Then select the folder where you cloned the project. Or `Reopen in Container` if you already have the project open.
 
-## Usage (to run the project)
+## Usage (to run/use the project)
 
 ### Downloading the project
 
-To download the project, you need to run the following command in the terminal:
-
-```bash
-git clone 
-```
-
-Once you have downloaded the project, you need to navigate to the project folder and add the following environment variables to the `.env` file:
-(Don't forget to fill in the variables with your own data)
+To download the project, navigate too the [release page](https://github.com/bazaaer/AiJournalist/releases) and download the version you want.
+Extract the zipfile and fill in the `EXAMPLE.env` and rename this file to `.env`
 
 ```env
 WP_URL=https://< YOUR WORDPRESS URL >/wp-json/wp/v2
@@ -103,19 +97,13 @@ IMG_OPTION= (Options: webimg/aiimg/noimg)
 
 ### Running the project
 
-To run the project, you need to run the following command in the terminal:
+To run the project, execute the following executable:
 
 When on linux: 
-
-```bash
-bash run.sh
-```
+Open the terminal in unzipped folder and run `bash run.sh`
 
 When on windows:
-
-```bash
-run.bat
-```
+dubble-click the bat file or open powershell in the unzipped folder and run `bash run.bat`
 
 ### Adding new tags
 
