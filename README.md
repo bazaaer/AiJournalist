@@ -14,6 +14,9 @@ a news article based on the output of a rss (feed).
 </pre>
 </div>
 
+## Before anything
+Make sure you have [docker](https://www.docker.com/) installed on your system
+
 ## Table of contents
 
 - [Description](#description)
