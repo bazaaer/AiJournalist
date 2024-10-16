@@ -21,11 +21,11 @@ Make sure you have [docker](https://www.docker.com/) installed on your system
 
 - [Description](#Description)
 - [Getting the API keys needed for the project](#getting-the-api-keys-needed-for-the-project)
-- [Installation](#Installation-(to-edit-the-project))
-- [Usage](#usage)
-- [Dependencies](#dependencies)
-- [Contributors](#contributors)
-- [Thanks](#thanks)
+- [Installation (to edit the project)](#Installation-(to-edit-the-project))
+- [Usage (to run/use the project)](#Usage-(to-run/use-the-project))
+- [Dependencies](#Dependencies)
+- [Contributors](#Contributors)
+- [Thanks](#Thanks)
 
 ## Description
 
