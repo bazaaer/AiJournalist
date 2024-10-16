@@ -16,7 +16,7 @@ docker compose down
 
 # Start the containers (without -d to keep the window open)
 echo "Starting the containers"
-docker compose up
+docker compose up -d
 
 # Keep the window open
 read -p "Press any key to exit..."
