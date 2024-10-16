@@ -17,7 +17,7 @@ docker compose down
 
 REM Start the containers (without -d to keep the window open)
 echo Starting the containers
-docker compose up
+docker compose up -d
 
 REM Keep the window open
 echo.
